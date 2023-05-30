@@ -1,97 +1,97 @@
-interface Adder{
-    add(nr: number):void;
-    getSum():number;
+/*interface CalculatingFunction{
+    calculate(x: number):number;
+    inputUnit():string;
+    outputUnit():string;
 }
 
-class CharCounter{
-    constructor(protected adder:Adder){}
-    addWordCharacters(word:string):void{
-        this.adder.add(word.length);
+class InchesToCm implements CalculatingFunction{
+    calculate(inches: number):number{
+        return inches*2.54;
     }
-    getCharacterCount(){
-        return this.adder.getSum();
+    inputUnit(): string {
+        return "in";
     }
-}
-
-class SimpleAdder implements Adder{
-    protected sum:number=0;
-    add(nr:number){this.sum+=nr;}
-    getSum(): number {
-        return this.sum;
+    outputUnit(): string{
+        return "cm";
     }
 }
 
-let adder1:Adder=new SimpleAdder();
-adder1.add(3);
-adder1.add(5);
-console.log(adder1.getSum());
-
-let adder2:Adder=new SimpleAdder();
-let counter2:CharCounter=new CharCounter(adder2);
-counter2.addWordCharacters("Juku");
-counter2.addWordCharacters("tuli");
-counter2.addWordCharacters("kooli");
-console.log(counter2.getCharacterCount());
-
-class CountingAdder implements Adder{
-    protected sum:number=0;
-    protected count:number=0;
-    add(nr:number){
-        this.sum+=nr;
-        this.count++;
+class CalculationsStore{
+    protected inputs:number[]=[];
+    protected outputs:number[]=[]
+    constructor(protected calculator:CalculatingFunction){}
+    addInput(x:number){
+        this.inputs.push(x);
+        this.outputs.push(this.calculator.calculate(x));
     }
-    getSum(): number {
-        return this.sum;
-    }
-    getAverage(){
-        if(this.count>0){
-            return this.sum/this.count;
+    getResult():string{
+        let result:string[]=[];
+        for(let index in this.inputs){
+            result.push(this.inputs[index]+" "+this.calculator.inputUnit()+" - "+
+                this.outputs[index]+" "+this.calculator.outputUnit());
         }
-        return 0;
+        return result.join("\n");
     }
 }
 
-let adder3:CountingAdder=new CountingAdder();
-let counter3:CharCounter=new CharCounter(adder3);
-counter3.addWordCharacters("Juku");
-counter3.addWordCharacters("tuli");
-counter3.addWordCharacters("kooli");
-console.log(counter3.getCharacterCount());
-console.log(adder3.getAverage());
+let converter=new InchesToCm();
+let store1:CalculationsStore=new CalculationsStore(converter);
+store1.addInput(0);
+store1.addInput(1);
+store1.addInput(5);
+store1.addInput(10);
 
-class StoringAdder implements Adder{
-    protected store:number[]=[];
-    add(nr:number){
-        this.store.push(nr);
+console.log(store1.getResult());*/
+interface CalculatingFunction{
+    calculate(x: number):number;
+    inputUnit():string;
+    outputUnit():string;
+    description():string;
+}
+
+class TimeCalculation implements CalculatingFunction{
+    constructor(protected difference: number, protected inputType: string, protected outputType: string,
+                protected descriptionstr: string){}
+    calculate(input: number):number{
+        let result:number=input+this.difference;
+        if(result<0){result+=24;}
+        if(result>23){result-=24;}
+        return result;
     }
-    getSum(): number {
-        let sum:number=0;
-        for(let amount of this.store){sum+=amount;}
-        return sum;
+    inputUnit(): string {
+        return this.inputType;
     }
-    getAverage(){
-        if(this.store.length>0){
-            return this.getSum()/this.store.length;
-        }
-        return 0;
+    outputUnit(): string{
+        return this.outputType;
     }
-    getRange(){
-        if(this.store.length==0){return 0;}
-        let minimum:number=this.store[0];
-        let maximum:number=minimum;
-        for(let amount of this.store){
-            if(amount<minimum){minimum=amount;}
-            if(amount>maximum){maximum=amount;}
-        }
-        return maximum-minimum;
+    description(): string {
+        return this.descriptionstr;
     }
 }
 
-let adder4:StoringAdder=new StoringAdder();
-let counter4:CharCounter=new CharCounter(adder4);
-counter4.addWordCharacters("Juku");
-counter4.addWordCharacters("tuli");
-counter4.addWordCharacters("kooli");
-console.log(counter4.getCharacterCount());
-console.log(adder4.getAverage());
-console.log(adder4.getRange());
+class CalculationsStore{
+    protected inputs:number[]=[];
+    protected outputs:number[]=[]
+    constructor(protected calculator:CalculatingFunction){}
+    addInput(x:number){
+        this.inputs.push(x);
+        this.outputs.push(this.calculator.calculate(x));
+    }
+    getResult():string{
+        let result:string[]=[this.calculator.description()];
+        for(let index in this.inputs){
+            result.push(this.inputs[index]+" "+this.calculator.inputUnit()+" - "+
+                this.outputs[index]+" "+this.calculator.outputUnit());
+        }
+        return result.join("\n");
+    }
+}
+
+let converter=new TimeCalculation(-1, "h Tallinn", "h Stockholm", "Kellaajad linnades");
+let store1:CalculationsStore=new CalculationsStore(converter);
+store1.addInput(0);
+store1.addInput(1);
+store1.addInput(5);
+store1.addInput(10);
+
+console.log(store1.getResult());
