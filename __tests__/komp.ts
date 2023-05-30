@@ -1,62 +1,20 @@
-/*
-import {Adder, SimpleAdder} from "../index";
-
-test('test1', () => {
-    let adder:Adder=new SimpleAdder();
-    expect(adder.getSum()).toBe(0);
-    adder.add(3);
-    expect(adder.getSum()).toBe(3);
-    adder.add(5);
-    expect(adder.getSum()).toBe(8);
-});
-
-let adder:Adder=null;
-
-beforeEach(() => {
-    adder=new SimpleAdder();
-})
+import { hasUncaughtExceptionCaptureCallback } from "process";
+import {initApp} from "../index2";
 
 test('start', () => {
-    expect(adder.getSum()).toBe(0);
+    expect(initApp(200000, console.log)).toBe(true);
 });
 
-test('one value', () => {
-    adder.add(3);
-    expect(adder.getSum()).toBe(3);
+
+test('mock memory ok', () => {
+    let f=jest.fn();
+    initApp(200000, f);
+    expect(f).toBeCalledWith("Rakendus käivitus");
 });
 
-test('two values', () => {
-    adder.add(3);
-    adder.add(5);
-    expect(adder.getSum()).toBe(8);
-});
-
-*/
-
-import {StoringAdder} from "../index2";
-
-let adder:StoringAdder=null;
-beforeEach(() => {
-    adder=new StoringAdder();
-})
-
-test('start', () => {
-    expect(adder.getSum()).toBe(0);
-});
-
-test('one value', () => {
-    adder.add(3);
-    expect(adder.getSum()).toBe(3);
-});
-
-test('two values', () => {
-    adder.add(3);
-    adder.add(5);
-    expect(adder.getSum()).toBe(8);
-});
-
-test('two values range', () => {
-    adder.add(3);
-    adder.add(5);
-    expect(adder.getRange()).toBe(2);
+test('mock memory little', () => {
+    let f=jest.fn();
+    initApp(20000, f);
+    expect(f).toBeCalledWith("Vaba mälu ainult 20000");
+    expect(f).toBeCalledTimes(1);
 });
